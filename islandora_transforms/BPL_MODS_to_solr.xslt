@@ -20,6 +20,14 @@
       <xsl:with-param name="field_name" select="'subject_name_personal_namePart_not_date'"/>
       <xsl:with-param name="content" select="normalize-space()"/>
     </xsl:call-template>
+    <xsl:call-template name="write_bpl_field">
+      <xsl:with-param name="field_name" select="'faceted_subjects'"/>
+      <xsl:with-param name="content" select="normalize-space()"/>
+    </xsl:call-template>
+    <xsl:call-template name="write_bpl_field">
+      <xsl:with-param name="field_name" select="'all_subject_descendants'"/>
+      <xsl:with-param name="content" select="normalize-space()"/>
+    </xsl:call-template>
   </xsl:template>
 
   <!-- Make sure subject/name/nameParts of all types are being indexed (no
@@ -29,12 +37,21 @@
       <xsl:with-param name="field_name" select="'subject_name_namePart_not_typed'"/>
       <xsl:with-param name="content" select="normalize-space()"/>
     </xsl:call-template>
+    <xsl:call-template name="write_bpl_field">
+      <xsl:with-param name="field_name" select="'all_subject_descendants'"/>
+      <xsl:with-param name="content" select="normalize-space()"/>
+    </xsl:call-template>
   </xsl:template>
 
-  <!-- Lump faceted subject fields together -->
-  <xsl:template mode="slurp_for_bpl" match="mods:subject/mods:topic | mods:subject/mods:name[@type='personal']/mods:namePart[not(@type='date')]">
+  <!-- Lump faceted subject topic fields together with non-date-typed names from
+       above. -->
+  <xsl:template mode="slurp_for_bpl" match="mods:subject/mods:topic">
     <xsl:call-template name="write_bpl_field">
       <xsl:with-param name="field_name" select="'faceted_subjects'"/>
+      <xsl:with-param name="content" select="normalize-space()"/>
+    </xsl:call-template>
+    <xsl:call-template name="write_bpl_field">
+      <xsl:with-param name="field_name" select="'all_subject_descendants'"/>
       <xsl:with-param name="content" select="normalize-space()"/>
     </xsl:call-template>
   </xsl:template>
@@ -97,19 +114,22 @@
 
   <!-- Concatenate geographic elements together using double-dashes -->
   <xsl:template name="bpl_concatenate_mods_geographic">
-    <xsl:param name="geographic_nodes"/>
+    <xsl:param name="subject_nodes"/>
 
-    <!-- Get the value first so we can see if it's going to be an empty string -->
-    <xsl:variable name="concatenated_geographic">
-      <xsl:for-each select="$geographic_nodes">
-        <xsl:value-of select="normalize-space(text())"/>
-        <xsl:if test="position()!=last()">--</xsl:if>
-      </xsl:for-each>
-    </xsl:variable>
-    <xsl:call-template name="write_bpl_field">
-      <xsl:with-param name="field_name" select="'subject_geographic_concatenated'"/>
-      <xsl:with-param name="content" select="$concatenated_geographic"/>
-    </xsl:call-template>
+    <xsl:for-each select="$subject_nodes">
+      <!-- Concatenate geographic elements -->
+      <xsl:variable name="concatenated_geographic">
+        <xsl:for-each select="mods:geographic">
+          <xsl:variable name="node_text" select="normalize-space(text())"/>
+          <xsl:value-of select="$node_text"/>
+          <xsl:if test="$node_text and position()!=last()">--</xsl:if>
+        </xsl:for-each>
+      </xsl:variable>
+      <xsl:call-template name="write_bpl_field">
+        <xsl:with-param name="field_name" select="'subject_geographic_concatenated'"/>
+        <xsl:with-param name="content" select="$concatenated_geographic"/>
+      </xsl:call-template>
+    </xsl:for-each>
   </xsl:template>
 
   <!-- Does the actual Solr field writing -->

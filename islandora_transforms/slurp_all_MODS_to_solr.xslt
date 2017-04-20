@@ -30,8 +30,8 @@
       <xsl:with-param name="datastream" select="../@ID"/>
     </xsl:apply-templates>
     <xsl:apply-templates mode="slurp_for_bpl" select="$content//mods:mods[1]"/>
-    <xsl:call-template>
-      <xsl:with-param name="geographic_nodes" select="$content//mods:mods[1]/mods:subject/mods:geographic"/>
+    <xsl:call-template name="bpl_concatenate_mods_geographic">
+      <xsl:with-param name="subject_nodes" select="$content//mods:mods[1]/mods:subject"/>
     </xsl:call-template>
   </xsl:template>
 
