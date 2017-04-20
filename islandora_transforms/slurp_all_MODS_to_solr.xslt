@@ -29,6 +29,10 @@
       <xsl:with-param name="pid" select="../../@PID"/>
       <xsl:with-param name="datastream" select="../@ID"/>
     </xsl:apply-templates>
+    <xsl:apply-templates mode="slurp_for_bpl" select="$content//mods:mods[1]"/>
+    <xsl:call-template>
+      <xsl:with-param name="geographic_nodes" select="$content//mods:mods[1]/mods:subject/mods:geographic"/>
+    </xsl:call-template>
   </xsl:template>
 
   <!-- Handle dates. -->
