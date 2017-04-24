@@ -7,7 +7,7 @@
   exclude-result-prefixes="mods">
 
   <!--Non-date-typed regular name/namePart -->
-  <xsl:template mode="slurp_for_bpl" match="mods:name[@type='personal']/mods:namePart[not(@type='date')]">
+  <xsl:template mode="slurp_for_bpl" match="mods:mods/mods:name[@type='personal']/mods:namePart[not(@type='date')]">
     <xsl:call-template name="write_bpl_field">
       <xsl:with-param name="field_name" select="'name_personal_namePart_not_date'"/>
       <xsl:with-param name="content" select="normalize-space()"/>
@@ -15,7 +15,7 @@
   </xsl:template>
 
   <!-- Non-date-typed subject name/namePart -->
-  <xsl:template mode="slurp_for_bpl" match="mods:subject/mods:name[@type='personal']/mods:namePart[not(@type='date')]">
+  <xsl:template mode="slurp_for_bpl" match="mods:mods/mods:subject/mods:name[@type='personal']/mods:namePart[not(@type='date')]">
     <xsl:call-template name="write_bpl_field">
       <xsl:with-param name="field_name" select="'subject_name_personal_namePart_not_date'"/>
       <xsl:with-param name="content" select="normalize-space()"/>
@@ -32,7 +32,7 @@
 
   <!-- Make sure subject/name/nameParts of all types are being indexed (no
        non-typed field is currently indexed for subject/name) -->
-  <xsl:template mode="slurp_for_bpl" match="mods:subject/mods:name/mods:namePart">
+  <xsl:template mode="slurp_for_bpl" match="mods:mods/mods:subject/mods:name/mods:namePart">
     <xsl:call-template name="write_bpl_field">
       <xsl:with-param name="field_name" select="'subject_name_namePart_not_typed'"/>
       <xsl:with-param name="content" select="normalize-space()"/>
@@ -45,7 +45,7 @@
 
   <!-- Lump faceted subject topic fields together with non-date-typed names from
        above. -->
-  <xsl:template mode="slurp_for_bpl" match="mods:subject/mods:topic">
+  <xsl:template mode="slurp_for_bpl" match="mods:mods/mods:subject/mods:topic">
     <xsl:call-template name="write_bpl_field">
       <xsl:with-param name="field_name" select="'faceted_subjects'"/>
       <xsl:with-param name="content" select="normalize-space()"/>
@@ -57,7 +57,7 @@
   </xsl:template>
 
   <!-- Lump together all descendants of subject for advanced search -->
-  <xsl:template mode="slurp_for_bpl" match="mods:subject//*">
+  <xsl:template mode="slurp_for_bpl" match="mods:mods/mods:subject//*">
     <xsl:call-template name="write_bpl_field">
       <xsl:with-param name="field_name" select="'all_subject_descendants'"/>
       <xsl:with-param name="content" select="normalize-space()"/>
@@ -65,7 +65,7 @@
   </xsl:template>
 
   <!-- Non-otherTyped relatedItem/titleInfo/title -->
-  <xsl:template mode="slurp_for_bpl" match="mods:relatedItem[not(@otherType)]/mods:titleInfo/mods:title">
+  <xsl:template mode="slurp_for_bpl" match="mods:mods/mods:relatedItem[not(@otherType)]/mods:titleInfo/mods:title">
     <xsl:call-template name="write_bpl_field">
       <xsl:with-param name="field_name" select="'relatedItem_not_otherType_titleInfo_title'"/>
       <xsl:with-param name="content" select="normalize-space()"/>
@@ -73,7 +73,7 @@
   </xsl:template>
 
   <!-- Non-typed note -->
-  <xsl:template mode="slurp_for_bpl" match="mods:note[not(@type)]">
+  <xsl:template mode="slurp_for_bpl" match="mods:mods/mods:note[not(@type)]">
     <xsl:call-template name="write_bpl_field">
       <xsl:with-param name="field_name" select="'note_no_type'"/>
       <xsl:with-param name="content" select="normalize-space()"/>
@@ -81,7 +81,7 @@
   </xsl:template>
 
   <!-- Both types of call numbers, for advanced search -->
-  <xsl:template mode="slurp_for_bpl" match="mods:identifier[@type='local-call-number'] | mods:identifier[@type='non-marc-call-number']">
+  <xsl:template mode="slurp_for_bpl" match="mods:mods/mods:identifier[@type='local-call-number'] | mods:identifier[@type='non-marc-call-number']">
     <xsl:call-template name="write_bpl_field">
       <xsl:with-param name="field_name" select="'all_call_numbers'"/>
       <xsl:with-param name="content" select="normalize-space()"/>
@@ -89,7 +89,7 @@
   </xsl:template>
 
   <!-- Both types of filing suffixes, for advanced search -->
-  <xsl:template mode="slurp_for_bpl" match="mods:identifier[@type='local-filing-suffix'] | mods:identifier[@type='non-marc-filing-suffix']">
+  <xsl:template mode="slurp_for_bpl" match="mods:mods/mods:identifier[@type='local-filing-suffix'] | mods:identifier[@type='non-marc-filing-suffix']">
     <xsl:call-template name="write_bpl_field">
       <xsl:with-param name="field_name" select="'all_filing_suffixes'"/>
       <xsl:with-param name="content" select="normalize-space()"/>
@@ -97,7 +97,7 @@
   </xsl:template>
 
   <!-- Concatenate title/nonSort with title -->
-  <xsl:template mode="slurp_for_bpl" match="mods:titleInfo[mods:nonSort and mods:title]">
+  <xsl:template mode="slurp_for_bpl" match="mods:mods/mods:titleInfo[mods:nonSort and mods:title]">
     <xsl:call-template name="write_bpl_field">
       <xsl:with-param name="field_name" select="'titleInfo_title_concatenated_nonSort'"/>
       <xsl:with-param name="content" select="concat(normalize-space(mods:nonSort/text()), ' ', normalize-space(mods:title/text()))"/>
@@ -105,7 +105,7 @@
   </xsl:template>
 
   <!-- Concatenate physicalDescription/extent with the extent's @unit -->
-  <xsl:template mode="slurp_for_bpl" match="mods:physicalDescription/mods:extent[@unit]">
+  <xsl:template mode="slurp_for_bpl" match="mods:mods/mods:physicalDescription/mods:extent[@unit]">
     <xsl:call-template name="write_bpl_field">
       <xsl:with-param name="field_name" select="'physicalDescription_extent_concatenated_unit'"/>
       <xsl:with-param name="content" select="concat(normalize-space(text()), ' ', normalize-space(@unit))"/>
@@ -113,23 +113,19 @@
   </xsl:template>
 
   <!-- Concatenate geographic elements together using double-dashes -->
-  <xsl:template name="bpl_concatenate_mods_geographic">
-    <xsl:param name="subject_nodes"/>
-
-    <xsl:for-each select="$subject_nodes">
-      <!-- Concatenate geographic elements -->
-      <xsl:variable name="concatenated_geographic">
-        <xsl:for-each select="mods:geographic">
-          <xsl:variable name="node_text" select="normalize-space(text())"/>
-          <xsl:value-of select="$node_text"/>
-          <xsl:if test="$node_text and position()!=last()">--</xsl:if>
-        </xsl:for-each>
-      </xsl:variable>
-      <xsl:call-template name="write_bpl_field">
-        <xsl:with-param name="field_name" select="'subject_geographic_concatenated'"/>
-        <xsl:with-param name="content" select="$concatenated_geographic"/>
-      </xsl:call-template>
-    </xsl:for-each>
+  <xsl:template mode="slurp_for_bpl" match="mods:mods/mods:subject">
+    <!-- Concatenate geographic elements -->
+    <xsl:variable name="concatenated_geographic">
+      <xsl:for-each select="mods:geographic">
+        <xsl:variable name="node_text" select="normalize-space(text())"/>
+        <xsl:value-of select="$node_text"/>
+        <xsl:if test="$node_text and position()!=last()">--</xsl:if>
+      </xsl:for-each>
+    </xsl:variable>
+    <xsl:call-template name="write_bpl_field">
+      <xsl:with-param name="field_name" select="'subject_geographic_concatenated'"/>
+      <xsl:with-param name="content" select="$concatenated_geographic"/>
+    </xsl:call-template>
   </xsl:template>
 
   <!-- Does the actual Solr field writing -->
