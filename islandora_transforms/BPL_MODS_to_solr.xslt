@@ -14,50 +14,40 @@
     </xsl:call-template>
   </xsl:template>
 
-  <!-- Non-date-typed subject name/namePart -->
-  <xsl:template mode="slurp_for_bpl" match="mods:mods/mods:subject/mods:name[@type='personal']/mods:namePart[not(@type='date')]">
-    <xsl:call-template name="write_bpl_field">
-      <xsl:with-param name="field_name" select="'subject_name_personal_namePart_not_date'"/>
-      <xsl:with-param name="content" select="normalize-space()"/>
-    </xsl:call-template>
-    <xsl:call-template name="write_bpl_field">
-      <xsl:with-param name="field_name" select="'faceted_subjects'"/>
-      <xsl:with-param name="content" select="normalize-space()"/>
-    </xsl:call-template>
-    <xsl:call-template name="write_bpl_field">
-      <xsl:with-param name="field_name" select="'all_subject_descendants'"/>
-      <xsl:with-param name="content" select="normalize-space()"/>
-    </xsl:call-template>
-  </xsl:template>
-
-  <!-- Make sure subject/name/nameParts of all types are being indexed (no
-       non-typed field is currently indexed for subject/name) -->
-  <xsl:template mode="slurp_for_bpl" match="mods:mods/mods:subject/mods:name/mods:namePart">
-    <xsl:call-template name="write_bpl_field">
-      <xsl:with-param name="field_name" select="'subject_name_namePart_not_typed'"/>
-      <xsl:with-param name="content" select="normalize-space()"/>
-    </xsl:call-template>
-    <xsl:call-template name="write_bpl_field">
-      <xsl:with-param name="field_name" select="'all_subject_descendants'"/>
-      <xsl:with-param name="content" select="normalize-space()"/>
-    </xsl:call-template>
+  <xsl:template mode="slurp_for_bpl_subjects" match="mods:name">
+    <!-- Non-date-typed subject name/namePart -->
+    <xsl:if test="@type='personal' and mods:namePart[not(@type='date')]">
+      <xsl:call-template name="write_bpl_field">
+        <xsl:with-param name="field_name" select="'subject_name_personal_namePart_not_date'"/>
+        <xsl:with-param name="content" select="normalize-space(mods:namePart/text())"/>
+      </xsl:call-template>
+    </xsl:if>
+    <!-- Make sure subject/name/nameParts of all types are being indexed (no
+         non-typed field is currently indexed for subject/name) -->
+    <xsl:if test="mods:namePart">
+      <xsl:call-template name="write_bpl_field">
+        <xsl:with-param name="field_name" select="'faceted_subjects'"/>
+        <xsl:with-param name="content" select="normalize-space(mods:namePart/text())"/>
+      </xsl:call-template>
+      <xsl:call-template name="write_bpl_field">
+        <xsl:with-param name="field_name" select="'subject_name_namePart_all_types'"/>
+        <xsl:with-param name="content" select="normalize-space(mods:namePart/text())"/>
+      </xsl:call-template>
+    </xsl:if>
   </xsl:template>
 
   <!-- Lump faceted subject topic fields together with non-date-typed names from
        above. -->
-  <xsl:template mode="slurp_for_bpl" match="mods:mods/mods:subject/mods:topic">
+  <xsl:template mode="slurp_for_bpl_subjects" match="mods:topic">
     <xsl:call-template name="write_bpl_field">
       <xsl:with-param name="field_name" select="'faceted_subjects'"/>
       <xsl:with-param name="content" select="normalize-space()"/>
     </xsl:call-template>
-    <xsl:call-template name="write_bpl_field">
-      <xsl:with-param name="field_name" select="'all_subject_descendants'"/>
-      <xsl:with-param name="content" select="normalize-space()"/>
-    </xsl:call-template>
   </xsl:template>
 
-  <!-- Lump together all descendants of subject for advanced search -->
-  <xsl:template mode="slurp_for_bpl" match="mods:mods/mods:subject//*">
+  <!-- Lump together all descendants of subject for advanced search that haven't
+       yet been lumped in -->
+  <xsl:template mode="slurp_for_bpl_subject_descendants" match="mods:subject//*">
     <xsl:call-template name="write_bpl_field">
       <xsl:with-param name="field_name" select="'all_subject_descendants'"/>
       <xsl:with-param name="content" select="normalize-space()"/>
@@ -97,11 +87,23 @@
   </xsl:template>
 
   <!-- Concatenate title/nonSort with title -->
-  <xsl:template mode="slurp_for_bpl" match="mods:mods/mods:titleInfo[mods:nonSort and mods:title]">
-    <xsl:call-template name="write_bpl_field">
-      <xsl:with-param name="field_name" select="'titleInfo_title_concatenated_nonSort'"/>
-      <xsl:with-param name="content" select="concat(normalize-space(mods:nonSort/text()), ' ', normalize-space(mods:title/text()))"/>
-    </xsl:call-template>
+  <xsl:template mode="slurp_for_bpl" match="mods:mods/mods:titleInfo">
+    <xsl:variable name="content">
+      <xsl:choose>
+        <xsl:when test="mods:title and mods:nonSort">
+          <xsl:value-of select="concat(normalize-space(mods:nonSort/text()), ' ', normalize-space(mods:title/text()))"/>
+        </xsl:when>
+        <xsl:when test="mods:title and not(mods:nonSort)">
+          <xsl:value-of select="normalize-space(mods:title/text())"/>
+        </xsl:when>
+      </xsl:choose>
+    </xsl:variable>
+    <xsl:if test="not($content = '')">
+      <xsl:call-template name="write_bpl_field">
+        <xsl:with-param name="field_name" select="'titleInfo_title_concatenated_nonSort'"/>
+        <xsl:with-param name="content" select="$content"/>
+      </xsl:call-template>
+    </xsl:if>
   </xsl:template>
 
   <!-- Concatenate physicalDescription/extent with the extent's @unit -->
@@ -126,6 +128,9 @@
       <xsl:with-param name="field_name" select="'subject_geographic_concatenated'"/>
       <xsl:with-param name="content" select="$concatenated_geographic"/>
     </xsl:call-template>
+    <!-- Apply templates to children of subject -->
+    <xsl:apply-templates mode="slurp_for_bpl_subjects" select="."/>
+    <xsl:apply-templates mode="slurp_for_bpl_subject_descendants" select="."/>
   </xsl:template>
 
   <!-- Does the actual Solr field writing -->
