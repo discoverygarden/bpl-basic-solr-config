@@ -98,12 +98,10 @@
         </xsl:when>
       </xsl:choose>
     </xsl:variable>
-    <xsl:if test="not($content = '')">
-      <xsl:call-template name="write_bpl_field">
-        <xsl:with-param name="field_name" select="'titleInfo_title_concatenated_nonSort'"/>
-        <xsl:with-param name="content" select="$content"/>
-      </xsl:call-template>
-    </xsl:if>
+    <xsl:call-template name="write_bpl_field">
+      <xsl:with-param name="field_name" select="'titleInfo_title_concatenated_nonSort'"/>
+      <xsl:with-param name="content" select="$content"/>
+    </xsl:call-template>
   </xsl:template>
 
   <!-- Concatenate physicalDescription/extent with the extent's @unit -->
