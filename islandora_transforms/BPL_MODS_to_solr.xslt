@@ -6,19 +6,27 @@
   xmlns:mods="http://www.loc.gov/mods/v3"
   exclude-result-prefixes="mods">
 
-  <!--Non-date-typed regular name/namePart -->
-  <xsl:template mode="slurp_for_bpl" match="mods:mods/mods:name[@type='personal']/mods:namePart[not(@type='date')]">
+  <!-- Gather all abstracts, typed or not -->
+  <xsl:template mode="slurp_for_bpl" match="mods:mods/mods:abstract">
     <xsl:call-template name="write_bpl_field">
-      <xsl:with-param name="field_name" select="'name_personal_namePart_not_date'"/>
+      <xsl:with-param name="field_name" select="'abstract_all_types'"/>
+      <xsl:with-param name="content" select="normalize-space()"/>
+    </xsl:call-template>
+  </xsl:template>
+
+  <!--Non-date-typed regular name/namePart -->
+  <xsl:template mode="slurp_for_bpl" match="mods:mods/mods:name[@type='personal']/mods:namePart[not(@type='date')] and not(@type='termsOfAddress')">
+    <xsl:call-template name="write_bpl_field">
+      <xsl:with-param name="field_name" select="'name_personal_namePart_not_date_or_termsOfAddress'"/>
       <xsl:with-param name="content" select="normalize-space()"/>
     </xsl:call-template>
   </xsl:template>
 
   <xsl:template mode="slurp_for_bpl_subjects" match="mods:name">
     <!-- Non-date-typed subject name/namePart -->
-    <xsl:if test="@type='personal' and mods:namePart[not(@type='date')]">
+    <xsl:if test="@type='personal' and mods:namePart[not(@type='date') and not(@type='termsOfAddress')]">
       <xsl:call-template name="write_bpl_field">
-        <xsl:with-param name="field_name" select="'subject_name_personal_namePart_not_date'"/>
+        <xsl:with-param name="field_name" select="'subject_name_personal_namePart_not_date_or_termsOfAddress'"/>
         <xsl:with-param name="content" select="normalize-space(mods:namePart/text())"/>
       </xsl:call-template>
     </xsl:if>
