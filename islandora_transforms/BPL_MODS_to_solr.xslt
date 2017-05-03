@@ -15,7 +15,7 @@
   </xsl:template>
 
   <!--Non-date-typed regular name/namePart -->
-  <xsl:template mode="slurp_for_bpl" match="mods:mods/mods:name[@type='personal']/mods:namePart[not(@type='date')] and not(@type='termsOfAddress')">
+  <xsl:template mode="slurp_for_bpl" match="mods:mods/mods:name[@type='personal']/mods:namePart[not(@type='date') and not(@type='termsOfAddress')]">
     <xsl:call-template name="write_bpl_field">
       <xsl:with-param name="field_name" select="'name_personal_namePart_not_date_or_termsOfAddress'"/>
       <xsl:with-param name="content" select="normalize-space()"/>
