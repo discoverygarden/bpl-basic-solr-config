@@ -243,6 +243,14 @@
         </xsl:choose>
       </xsl:for-each>
 
+      <!-- XXX: Currently a lazy check on all objects regardless of whether they
+           should have OBJs in the first place. The use case presently is to
+           filter on "true", so this is fine. We can flesh this out later with
+           fancy content model checking if we want. -->
+      <field name="obj_attached_b">
+        <xsl:value-of select="boolean(foxml:datastream[@ID='OBJ'])"/>
+      </field>
+
       <!-- this is an example of using template modes to have multiple ways of indexing the same stream -->
       <!--
       <xsl:apply-templates select="foxml:datastream[@ID='EAC-CPF']/foxml:datastreamVersion[last()]/foxml:xmlContent//eaccpf:eac-cpf">
