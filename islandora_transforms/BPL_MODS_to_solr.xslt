@@ -116,9 +116,9 @@
         <xsl:when test="mods:subTitle">
           <xsl:value-of select="concat($content, ': ', normalize-space(mods:subTitle/text()))"/>
         </xsl:when>
-        <xsl:when test="not(mods:subTitle)">
+        <xsl:otherwise>
           <xsl:value-of select="$content"/>
-        </xsl:when>
+        </xsl:otherwise>
       </xsl:choose>
     </xsl:variable>
     <xsl:call-template name="write_bpl_field">
@@ -160,9 +160,6 @@
       <xsl:choose>
         <xsl:when test="mods:identifier[@type='non-marc-filing-suffix'] and mods:identifier[@type='non-marc-call-number']">
           <xsl:value-of select="concat(normalize-space(mods:identifier[@type='non-marc-filing-suffix']/text()), ' ', normalize-space(mods:identifier[@type='non-marc-call-number']/text()))"/>
-        </xsl:when>
-        <xsl:when test="mods:identifier[@type='non-marc-filing-suffix'] and not(mods:identifier[@type='non-marc-call-number'])">
-          <xsl:value-of select="normalize-space(mods:identifier[@type='non-marc-filing-suffix']/text())"/>
         </xsl:when>
         <xsl:when test="not(mods:identifier[@type='non-marc-filing-suffix']) and mods:identifier[@type='non-marc-call-number']">
           <xsl:value-of select="normalize-space(mods:identifier[@type='non-marc-call-number']/text())"/>
