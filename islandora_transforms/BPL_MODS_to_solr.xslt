@@ -110,6 +110,21 @@
       <xsl:with-param name="field_name" select="'titleInfo_title_concatenated_nonSort'"/>
       <xsl:with-param name="content" select="$content"/>
     </xsl:call-template>
+    <!-- Concatenate subTitle with this concatenated field with ': ' -->
+    <xsl:variable name="concatenated_title_nonSort_subTitle">
+      <xsl:choose>
+        <xsl:when test="mods:subTitle">
+          <xsl:value-of select="concat($content, ': ', normalize-space(mods:subTitle/text()))"/>
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:value-of select="$content"/>
+        </xsl:otherwise>
+      </xsl:choose>
+    </xsl:variable>
+    <xsl:call-template name="write_bpl_field">
+      <xsl:with-param name="field_name" select="'titleInfo_title_concatenated_nonSort_concatenated_subTitle'"/>
+      <xsl:with-param name="content" select="$concatenated_title_nonSort_subTitle"/>
+    </xsl:call-template>
   </xsl:template>
 
   <!-- Concatenate physicalDescription/extent with the extent's @unit -->
@@ -137,6 +152,25 @@
     <!-- Apply templates to children of subject -->
     <xsl:apply-templates mode="slurp_for_bpl_subjects" select="."/>
     <xsl:apply-templates mode="slurp_for_bpl_subject_descendants" select="."/>
+  </xsl:template>
+
+  <!-- Concatenate filing-suffix and call-number with space. -->
+  <xsl:template mode="slurp_for_bpl" match="mods:mods">
+    <xsl:variable name="content">
+      <xsl:choose>
+        <xsl:when test="mods:identifier[@type='non-marc-filing-suffix'] and mods:identifier[@type='non-marc-call-number']">
+          <xsl:value-of select="concat(normalize-space(mods:identifier[@type='non-marc-filing-suffix']/text()), ' ', normalize-space(mods:identifier[@type='non-marc-call-number']/text()))"/>
+        </xsl:when>
+        <xsl:when test="not(mods:identifier[@type='non-marc-filing-suffix']) and mods:identifier[@type='non-marc-call-number']">
+          <xsl:value-of select="normalize-space(mods:identifier[@type='non-marc-call-number']/text())"/>
+        </xsl:when>
+      </xsl:choose>
+    </xsl:variable>
+    <xsl:call-template name="write_bpl_field">
+      <xsl:with-param name="field_name" select="'identifier_non-marc-filing-suffix_concatenated_non-marc-call-number'"/>
+      <xsl:with-param name="content" select="$content"/>
+    </xsl:call-template>
+    <xsl:apply-templates mode="slurp_for_bpl"/>
   </xsl:template>
 
   <!-- Does the actual Solr field writing -->
