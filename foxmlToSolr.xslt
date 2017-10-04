@@ -250,6 +250,10 @@
       <field name="obj_attached_b">
         <xsl:choose>
           <xsl:when test="foxml:datastream[@ID='OBJ']">
+            <!-- XXX: So, Xalan doesn't appear to allow you to select true() or
+                 false() outright, though by all accounts that should be valid
+                 1.0 XSLT. Casting the node itself instead, which will always
+                 evaluate to true as we've already confirmed its existence. -->
             <xsl:value-of select="boolean(foxml:datastream[@ID='OBJ'])"/>
           </xsl:when>
           <xsl:otherwise>
