@@ -25,7 +25,8 @@
   xmlns:encoder="xalan://java.net.URLEncoder"
   xmlns:java="http://xml.apache.org/xalan/java"
   xmlns:sparql="http://www.w3.org/2001/sw/DataAccess/rf1/result"
-  xmlns:xalan="http://xml.apache.org/xalan">
+  xmlns:xalan="http://xml.apache.org/xalan"
+  xmlns:string="xalan://java.lang.String">
 
   <xsl:output method="xml" indent="yes" encoding="UTF-8"/>
 
@@ -110,6 +111,7 @@
   <xsl:include href="/usr/local/fedora/tomcat/webapps/fedoragsearch/WEB-INF/classes/fgsconfigFinal/index/FgsIndex/islandora_transforms/slurp_all_chemicalML_to_solr.xslt"/>
   <!--  Used for indexing other objects. -->
   <xsl:include href="/usr/local/fedora/tomcat/webapps/fedoragsearch/WEB-INF/classes/fgsconfigFinal/index/FgsIndex/islandora_transforms/library/traverse-graph.xslt"/>
+  <xsl:include href="/usr/local/fedora/tomcat/webapps/fedoragsearch/WEB-INF/classes/fgsconfigFinal/index/FgsIndex/islandora_transforms/library/risearch_ask_bool.xslt"/>
   
   <!-- Used to index the list of collections to which an object belongs.
     Requires the "traverse-graph.xslt" bit as well.
@@ -243,12 +245,35 @@
         </xsl:choose>
       </xsl:for-each>
 
-      <!-- XXX: Currently a lazy check on all objects regardless of whether they
-           should have OBJs in the first place. The use case presently is to
-           filter on "true", so this is fine. We can flesh this out later with
-           fancy content model checking if we want. -->
+      <!-- Slightly less-than-lazy check that determines if the object has an
+           OBJ, and if not, if it's a compound that has children with OBJs. -->
       <field name="obj_attached_b">
-        <xsl:value-of select="boolean(foxml:datastream[@ID='OBJ'])"/>
+        <xsl:choose>
+          <xsl:when test="foxml:datastream[@ID='OBJ']">
+            <!-- XXX: So, Xalan doesn't appear to allow you to select true() or
+                 false() outright, though by all accounts that should be valid
+                 1.0 XSLT. Casting the node itself instead, which will always
+                 evaluate to true as we've already confirmed its existence. -->
+            <xsl:value-of select="boolean(foxml:datastream[@ID='OBJ'])"/>
+          </xsl:when>
+          <xsl:otherwise>
+            <xsl:variable name="constituent_obj_query">
+              PREFIX fm: &lt;info:fedora/fedora-system:def/model#&gt;
+              PREFIX fv: &lt;info:fedora/fedora-system:def/view#&gt;
+              PREFIX fre: &lt;info:fedora/fedora-system:def/relations-external#&gt;
+              ASK {
+                &lt;info:fedora/%PID%&gt; fm:hasModel &lt;info:fedora/islandora:compoundCModel&gt; .
+               ?constituent fre:isConstituentOf &lt;info:fedora/%PID%&gt; .
+               ?constituent fv:disseminates ?ds .
+               ?ds fv:disseminationType &lt;info:fedora/*/OBJ&gt;
+               }
+            </xsl:variable>
+            <xsl:call-template name="risearch_ask_bool">
+              <xsl:with-param name="risearch" select="concat($PROT, '://', encoder:encode($FEDORAUSER), ':', encoder:encode($FEDORAPASS), '@', $HOST, ':', $PORT, '/fedora/risearch')"/>
+              <xsl:with-param name="query" select="string:replaceAll($constituent_obj_query, '%PID%', $PID)"/>
+            </xsl:call-template>
+          </xsl:otherwise>
+        </xsl:choose>
       </field>
 
       <!-- this is an example of using template modes to have multiple ways of indexing the same stream -->
