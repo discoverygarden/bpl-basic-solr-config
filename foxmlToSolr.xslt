@@ -260,6 +260,10 @@
           <xsl:otherwise>
             <xsl:call-template name="constituent_obj_attached_or_in_s3">
               <xsl:with-param name="pid" select="$PID"/>
+              <xsl:with-param name="fedorauser" select="$FEDORAUSER"/>
+              <xsl:with-param name="fedorapass" select="$FEDORAPASS"/>
+              <xsl:with-param name="fedora_risearch" select="concat($PROT, '://', $FEDORAUSER, ':', $FEDORAPASS, '@', $HOST, '/fedora/risearch')"/>
+              <xsl:with-param name="fedora_endpoint" select="concat($PROT, '://', $HOST, '/fedora')"/>
             </xsl:call-template>
           </xsl:otherwise>
         </xsl:choose>
