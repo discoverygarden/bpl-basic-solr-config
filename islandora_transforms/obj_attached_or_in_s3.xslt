@@ -15,6 +15,7 @@
          creds to be passed in to the datastream dissemination function. -->
     <xsl:param name="fedora_endpoint">http://localhost:8080/fedora</xsl:param>
     <xsl:param name="fedora_risearch">http://localhost:8080/fedora/risearch</xsl:param>
+    <!-- Parameter-ized for potential added specificity. -->
     <xsl:param name="constituent_obj_query">
       PREFIX fm: &lt;info:fedora/fedora-system:def/model#&gt;
       PREFIX fv: &lt;info:fedora/fedora-system:def/view#&gt;
@@ -29,10 +30,13 @@
       }
     </xsl:param>
 
+    <!-- Query the RI for constituents. -->
     <xsl:variable name="ri_pid_graph">
       <xsl:copy-of select="document(concat($fedora_risearch, '?query=', encoder:encode(string:replaceAll($constituent_obj_query, '%PID%', $pid)), '&amp;lang=sparql'))"/>
     </xsl:variable>
 
+    <!-- XXX: Feels a little hack-y, but successfully emulates a list mapper we
+         can later parse with XPath in XSLT 1.0. -->
     <xsl:variable name="pidlist">
       <xsl:for-each select="$ri_pid_graph//sparql:constituent">
         <obj_status>
@@ -41,6 +45,8 @@
       </xsl:for-each>
     </xsl:variable>
 
+    <!-- Part two of the triple-x: pretend the PID list is part of an empty
+         document. -->
     <xsl:value-of select="boolean(document('')//xsl:variable[@name='pidlist']/obj_status[true])"/>
 
   </xsl:template>
