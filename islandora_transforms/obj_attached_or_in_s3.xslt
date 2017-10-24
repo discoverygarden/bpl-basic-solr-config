@@ -26,7 +26,7 @@
         &lt;info:fedora/%PID%&gt; fm:hasModel &lt;info:fedora/islandora:compoundCModel&gt; .
         ?constituent fre:isConstituentOf &lt;info:fedora/%PID%&gt; .
         ?constituent fv:disseminates ?ds .
-        ?ds fv:disseminationType &lt;info:fedora/*/OBJ&gt;
+        ?ds fv:disseminationType &lt;info:fedora/*/S3_MANIFEST&gt;
       }
     </xsl:param>
 
