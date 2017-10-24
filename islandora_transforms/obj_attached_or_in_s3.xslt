@@ -38,6 +38,9 @@
     <!-- XXX: Feels a little hack-y, but successfully emulates a list mapper we
          can later parse with XPath in XSLT 1.0. -->
     <xsl:variable name="pidlist">
+      <obj_status>
+          <xsl:value-of select="boolean(dgi-e:JSONToXML.convertJSONToDocument(dgi-e:FedoraUtils.getRawDatastreamDissemination($pid, 'S3_MANIFEST', $fedora_endpoint, $fedorauser, $fedorapass))/dsids/OBJ)"/>
+      </obj_status>
       <xsl:for-each select="$ri_pid_graph//sparql:constituent">
         <obj_status>
           <xsl:value-of select="boolean(dgi-e:JSONToXML.convertJSONToDocument(dgi-e:FedoraUtils.getRawDatastreamDissemination(substring-after(., 'info:fedora/'), 'S3_MANIFEST', $fedora_endpoint, $fedorauser, $fedorapass))/dsids/OBJ)"/>
