@@ -111,7 +111,7 @@
   <xsl:include href="/usr/local/fedora/tomcat/webapps/fedoragsearch/WEB-INF/classes/fgsconfigFinal/index/FgsIndex/islandora_transforms/slurp_all_chemicalML_to_solr.xslt"/>
   <!--  Used for indexing other objects. -->
   <xsl:include href="/usr/local/fedora/tomcat/webapps/fedoragsearch/WEB-INF/classes/fgsconfigFinal/index/FgsIndex/islandora_transforms/library/traverse-graph.xslt"/>
-  <xsl:include href="/usr/local/fedora/tomcat/webapps/fedoragsearch/WEB-INF/classes/fgsconfigFinal/index/FgsIndex/islandora_transforms/library/risearch_ask_bool.xslt"/>
+  <xsl:include href="/usr/local/fedora/tomcat/webapps/fedoragsearch/WEB-INF/classes/fgsconfigFinal/index/FgsIndex/islandora_transforms/obj_attached_or_in_s3.xslt"/>
   
   <!-- Used to index the list of collections to which an object belongs.
     Requires the "traverse-graph.xslt" bit as well.
@@ -246,7 +246,8 @@
       </xsl:for-each>
 
       <!-- Slightly less-than-lazy check that determines if the object has an
-           OBJ, and if not, if it's a compound that has children with OBJs. -->
+           OBJ, and if not, if it's a compound that has children with OBJs
+           entries in the S3_MANIFESTs. -->
       <field name="obj_attached_b">
         <xsl:choose>
           <xsl:when test="foxml:datastream[@ID='OBJ']">
@@ -257,20 +258,12 @@
             <xsl:value-of select="boolean(foxml:datastream[@ID='OBJ'])"/>
           </xsl:when>
           <xsl:otherwise>
-            <xsl:variable name="constituent_obj_query">
-              PREFIX fm: &lt;info:fedora/fedora-system:def/model#&gt;
-              PREFIX fv: &lt;info:fedora/fedora-system:def/view#&gt;
-              PREFIX fre: &lt;info:fedora/fedora-system:def/relations-external#&gt;
-              ASK {
-                &lt;info:fedora/%PID%&gt; fm:hasModel &lt;info:fedora/islandora:compoundCModel&gt; .
-               ?constituent fre:isConstituentOf &lt;info:fedora/%PID%&gt; .
-               ?constituent fv:disseminates ?ds .
-               ?ds fv:disseminationType &lt;info:fedora/*/OBJ&gt;
-               }
-            </xsl:variable>
-            <xsl:call-template name="risearch_ask_bool">
-              <xsl:with-param name="risearch" select="concat($PROT, '://', encoder:encode($FEDORAUSER), ':', encoder:encode($FEDORAPASS), '@', $HOST, ':', $PORT, '/fedora/risearch')"/>
-              <xsl:with-param name="query" select="string:replaceAll($constituent_obj_query, '%PID%', $PID)"/>
+            <xsl:call-template name="constituent_obj_attached_or_in_s3">
+              <xsl:with-param name="pid" select="$PID"/>
+              <xsl:with-param name="fedorauser" select="$FEDORAUSER"/>
+              <xsl:with-param name="fedorapass" select="$FEDORAPASS"/>
+              <xsl:with-param name="fedora_risearch" select="concat($PROT, '://', $FEDORAUSER, ':', $FEDORAPASS, '@', $HOST, ':', $PORT, '/fedora/risearch')"/>
+              <xsl:with-param name="fedora_endpoint" select="concat($PROT, '://', $HOST, ':', $PORT, '/fedora')"/>
             </xsl:call-template>
           </xsl:otherwise>
         </xsl:choose>
