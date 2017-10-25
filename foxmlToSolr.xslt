@@ -26,7 +26,8 @@
   xmlns:java="http://xml.apache.org/xalan/java"
   xmlns:sparql="http://www.w3.org/2001/sw/DataAccess/rf1/result"
   xmlns:xalan="http://xml.apache.org/xalan"
-  xmlns:string="xalan://java.lang.String">
+  xmlns:string="xalan://java.lang.String"
+  xmlns:dgi-e="xalan://ca.discoverygarden.gsearch_extensions">
 
   <xsl:output method="xml" indent="yes" encoding="UTF-8"/>
 
@@ -249,7 +250,9 @@
            OBJ, and if not, if it's a compound that has children with OBJs
            entries in the S3_MANIFESTs. -->
       <field name="obj_attached_b">
+        <xsl:variable name="fedora_endpoint" select="concat($PROT, '://', $HOST, ':', $PORT, '/fedora')"/>
         <xsl:choose>
+          <!-- When an OBJ is attached. -->
           <xsl:when test="foxml:datastream[@ID='OBJ']">
             <!-- XXX: So, Xalan doesn't appear to allow you to select true() or
                  false() outright, though by all accounts that should be valid
@@ -257,13 +260,18 @@
                  evaluate to true as we've already confirmed its existence. -->
             <xsl:value-of select="boolean(foxml:datastream[@ID='OBJ'])"/>
           </xsl:when>
+          <!-- When an S3_MANIFEST is attached that contains an OBJ entry. -->
+          <xsl:when test="foxml:datastream[@ID='S3_MANIFEST'] and dgi-e:JSONToXML.convertJSONToDocument(dgi-e:FedoraUtils.getRawDatastreamDissemination($PID, 'S3_MANIFEST', $fedora_endpoint, $FEDORAUSER, $FEDORAPASS))//datastreams/OBJ">
+            <xsl:value-of select="boolean(foxml:datastream[@ID='S3_MANIFEST'])"/>
+          </xsl:when>
+          <!-- Otherwise, check for constituents. -->
           <xsl:otherwise>
             <xsl:call-template name="constituent_obj_attached_or_in_s3">
               <xsl:with-param name="pid" select="$PID"/>
               <xsl:with-param name="fedorauser" select="$FEDORAUSER"/>
               <xsl:with-param name="fedorapass" select="$FEDORAPASS"/>
               <xsl:with-param name="fedora_risearch" select="concat($PROT, '://', $FEDORAUSER, ':', $FEDORAPASS, '@', $HOST, ':', $PORT, '/fedora/risearch')"/>
-              <xsl:with-param name="fedora_endpoint" select="concat($PROT, '://', $HOST, ':', $PORT, '/fedora')"/>
+              <xsl:with-param name="fedora_endpoint" select="$fedora_endpoint"/>
             </xsl:call-template>
           </xsl:otherwise>
         </xsl:choose>
