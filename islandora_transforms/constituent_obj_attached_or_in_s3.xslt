@@ -1,12 +1,12 @@
 <xsl:stylesheet version="1.0"
   xmlns:xalan="http://xml.apache.org/xalan"
   xmlns:encoder="xalan://java.net.URLEncoder"
-  xmlns:string="http://www.w3.org/2001/sw/DataAccess/rf1/result"
+  xmlns:string="xalan://java.lang.String"
   xmlns:sparql="http://www.w3.org/2001/sw/DataAccess/rf1/result"
   xmlns:dgi-e="xalan://ca.discoverygarden.gsearch_extensions"
   xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 
-  <!-- Determines if this object, or a constituent's, has an OBJ. -->
+  <!-- Determines if a constituent has an OBJ attached or in S3. -->
   <xsl:template name="constituent_obj_attached_or_in_s3">
     <xsl:param name="pid"/>
     <xsl:param name="fedorauser"/>
@@ -35,22 +35,15 @@
       <xsl:copy-of select="document(concat($fedora_risearch, '?query=', encoder:encode(string:replaceAll($constituent_obj_query, '%PID%', $pid)), '&amp;lang=sparql'))"/>
     </xsl:variable>
 
-    <!-- XXX: Feels a little hack-y, but successfully emulates a list mapper we
-         can later parse with XPath in XSLT 1.0. -->
+    <!-- XXX: Feels pretty hack-y, but there's no satisfactory way to write a
+         nodeset mapper in XSLT 1.0, so instead, map to string and ask if the
+         expected value was contained therein. -->
     <xsl:variable name="pidlist">
-      <obj_status>
-          <xsl:value-of select="boolean(dgi-e:JSONToXML.convertJSONToDocument(dgi-e:FedoraUtils.getRawDatastreamDissemination($pid, 'S3_MANIFEST', $fedora_endpoint, $fedorauser, $fedorapass))/dsids/OBJ)"/>
-      </obj_status>
-      <xsl:for-each select="$ri_pid_graph//sparql:constituent">
-        <obj_status>
-          <xsl:value-of select="boolean(dgi-e:JSONToXML.convertJSONToDocument(dgi-e:FedoraUtils.getRawDatastreamDissemination(substring-after(., 'info:fedora/'), 'S3_MANIFEST', $fedora_endpoint, $fedorauser, $fedorapass))/dsids/OBJ)"/>
-        </obj_status>
+      <xsl:for-each select="xalan:nodeset($ri_pid_graph)//*[@uri]">
+          <xsl:value-of select="boolean(dgi-e:JSONToXML.convertJSONToDocument(dgi-e:FedoraUtils.getRawDatastreamDissemination(substring-after(@uri, 'info:fedora/'), 'S3_MANIFEST', $fedora_endpoint, $fedorauser, $fedorapass))//datastreams/OBJ)"/>
       </xsl:for-each>
     </xsl:variable>
-
-    <!-- Part two of the triple-x: pretend the PID list is part of an empty
-         document. -->
-    <xsl:value-of select="boolean(document('')//xsl:variable[@name='pidlist']/obj_status[true])"/>
+    <xsl:value-of select="contains($pidlist, 'true')"/>
 
   </xsl:template>
 
