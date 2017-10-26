@@ -6,7 +6,7 @@
   xmlns:dgi-e="xalan://ca.discoverygarden.gsearch_extensions"
   xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 
-  <!-- Determines if this object, or a constituent's, has an OBJ. -->
+  <!-- Determines if a constituent has an OBJ attached or in S3. -->
   <xsl:template name="constituent_obj_attached_or_in_s3">
     <xsl:param name="pid"/>
     <xsl:param name="fedorauser"/>
