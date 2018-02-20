@@ -84,6 +84,11 @@
       <xsl:with-param name="field_name" select="'all_call_numbers'"/>
       <xsl:with-param name="content" select="normalize-space()"/>
     </xsl:call-template>
+    <xsl:call-template name="write_bpl_field">
+      <xsl:with-param name="field_name" select="'all_call_numbers'"/>
+      <xsl:with-param name="content" select="normalize-space()"/>
+      <xsl:with-param name="suffix" select="'_et'"/>
+    </xsl:call-template>
   </xsl:template>
 
   <!-- Both types of filing suffixes, for advanced search -->
@@ -177,11 +182,12 @@
   <xsl:template name="write_bpl_field">
     <xsl:param name="field_name"/>
     <xsl:param name="content"/>
+    <xsl:param name="suffix">_ms</xsl:param>
 
     <xsl:if test="not(normalize-space($content) = '')">
       <field>
         <xsl:attribute name="name">
-          <xsl:value-of select="concat('bpl_mods_', $field_name, '_ms')"/>
+          <xsl:value-of select="concat('bpl_mods_', $field_name, $suffix)"/>
         </xsl:attribute>
         <xsl:value-of select="$content"/>
       </field>
