@@ -117,14 +117,12 @@
     </xsl:call-template>
     <!-- Concatenate subTitle with this concatenated field with ': ' -->
     <xsl:variable name="concatenated_title_nonSort_subTitle">
-      <xsl:choose>
-        <xsl:when test="mods:subTitle">
-          <xsl:value-of select="concat($content, ': ', normalize-space(mods:subTitle/text()))"/>
-        </xsl:when>
-        <xsl:otherwise>
-          <xsl:value-of select="$content"/>
-        </xsl:otherwise>
-      </xsl:choose>
+      <xsl:variable name="subtitle" select="normalize-space(mods:subTitle)"/>
+      <xsl:value-of select="$content"/>
+      <xsl:if test="$subtitle">
+        <xsl:text>: </xsl:text>
+        <xsl:value-of select="$subtitle"/>
+      </xsl:if>
     </xsl:variable>
     <xsl:call-template name="write_bpl_field">
       <xsl:with-param name="field_name" select="'titleInfo_title_concatenated_nonSort_concatenated_subTitle'"/>
