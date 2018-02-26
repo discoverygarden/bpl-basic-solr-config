@@ -84,6 +84,11 @@
       <xsl:with-param name="field_name" select="'all_call_numbers'"/>
       <xsl:with-param name="content" select="normalize-space()"/>
     </xsl:call-template>
+    <xsl:call-template name="write_bpl_field">
+      <xsl:with-param name="field_name" select="'all_call_numbers'"/>
+      <xsl:with-param name="content" select="normalize-space()"/>
+      <xsl:with-param name="suffix" select="'_et'"/>
+    </xsl:call-template>
   </xsl:template>
 
   <!-- Both types of filing suffixes, for advanced search -->
@@ -112,14 +117,12 @@
     </xsl:call-template>
     <!-- Concatenate subTitle with this concatenated field with ': ' -->
     <xsl:variable name="concatenated_title_nonSort_subTitle">
-      <xsl:choose>
-        <xsl:when test="mods:subTitle">
-          <xsl:value-of select="concat($content, ': ', normalize-space(mods:subTitle/text()))"/>
-        </xsl:when>
-        <xsl:otherwise>
-          <xsl:value-of select="$content"/>
-        </xsl:otherwise>
-      </xsl:choose>
+      <xsl:variable name="subtitle" select="normalize-space(mods:subTitle)"/>
+      <xsl:value-of select="$content"/>
+      <xsl:if test="$subtitle">
+        <xsl:text>: </xsl:text>
+        <xsl:value-of select="$subtitle"/>
+      </xsl:if>
     </xsl:variable>
     <xsl:call-template name="write_bpl_field">
       <xsl:with-param name="field_name" select="'titleInfo_title_concatenated_nonSort_concatenated_subTitle'"/>
@@ -177,11 +180,12 @@
   <xsl:template name="write_bpl_field">
     <xsl:param name="field_name"/>
     <xsl:param name="content"/>
+    <xsl:param name="suffix">_ms</xsl:param>
 
     <xsl:if test="not(normalize-space($content) = '')">
       <field>
         <xsl:attribute name="name">
-          <xsl:value-of select="concat('bpl_mods_', $field_name, '_ms')"/>
+          <xsl:value-of select="concat('bpl_mods_', $field_name, $suffix)"/>
         </xsl:attribute>
         <xsl:value-of select="$content"/>
       </field>
