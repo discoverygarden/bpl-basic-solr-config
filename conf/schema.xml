@@ -229,6 +229,20 @@
         </analyzer>
     </fieldType>
 
+    <!-- Auto-complete with a single token starting on the left. -->
+    <fieldType name="edgedSingleText" class="solr.TextField">
+        <analyzer type="index">
+            <charFilter class="solr.MappingCharFilterFactory" mapping="mapping-ISOLatin1Accent.txt"/>
+            <tokenizer class="solr.EdgeNGramTokenizerFactory" minGramSize="1" maxGramSize="16"/>
+            <filter class="solr.LowerCaseFilterFactory"/>
+        </analyzer>
+        <analyzer type="query">
+            <charFilter class="solr.MappingCharFilterFactory" mapping="mapping-ISOLatin1Accent.txt"/>
+            <tokenizer class="solr.EdgeNGramTokenizerFactory" minGramSize="1" maxGramSize="16"/>
+            <filter class="solr.LowerCaseFilterFactory"/>
+        </analyzer>
+    </fieldType>
+
     <!-- This is an example of using the KeywordTokenizer along
          With various TokenFilterFactories to produce a sortable field
          that does not include some properties of the source text
@@ -335,6 +349,7 @@
    <dynamicField name="*_dt" type="date"    indexed="true"  stored="true"/>
    <dynamicField name="*_mdt" type="date"    indexed="true"  stored="true" multiValued="true"/>
    <dynamicField name="*_et" type="edgedText" indexed="true" stored="true" multiValued="true"/>
+   <dynamicField name="*_est" type="edgedSingleText" indexed="true" stored="true" multiValued="true"/>
    <dynamicField name="*_mlt" type="mappedLowerText" indexed="true" stored="true" multiValued='false'/>
 
    <!-- uncomment the following to ignore any fields that don't already match an existing
