@@ -87,7 +87,7 @@
     <xsl:call-template name="write_bpl_field">
       <xsl:with-param name="field_name" select="'all_call_numbers'"/>
       <xsl:with-param name="content" select="normalize-space()"/>
-      <xsl:with-param name="suffix" select="'_et'"/>
+      <xsl:with-param name="suffix" select="'_est'"/>
     </xsl:call-template>
   </xsl:template>
 
