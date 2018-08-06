@@ -4,7 +4,8 @@
   xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
   xmlns:foxml="info:fedora/fedora-system:def/foxml#"
   xmlns:mods="http://www.loc.gov/mods/v3"
-  exclude-result-prefixes="mods">
+  xmlns:java="http://xml.apache.org/xalan/java"
+  exclude-result-prefixes="mods java">
 
   <!-- Gather all abstracts, typed or not -->
   <xsl:template mode="slurp_for_bpl" match="mods:mods/mods:abstract">
@@ -174,6 +175,22 @@
       <xsl:with-param name="content" select="$content"/>
     </xsl:call-template>
     <xsl:apply-templates mode="slurp_for_bpl"/>
+  </xsl:template>
+
+  <!-- XXX: In an ideal world, we'd be on Solr 6+ and able to use query slop
+       to force token ordering at query time with fancy padding. Instead,
+       manually tokenize, set sort padding, and re-assemble/store so we can use
+       an untokenized string to sort at query time. -->
+  <xsl:template mode="slurp_for_bpl" match="mods:mods/mods:identifier[@type = 'non-marc-call-number']">
+    <xsl:variable name="content" select="normalize-space(text())"/>
+    <!-- Don't bother running an empty string through the sorter. -->
+    <xsl:if test="not($content = '')">
+      <xsl:call-template name="write_bpl_field">
+        <xsl:with-param name="field_name" select="'identifier_non_marc_call_number'"/>
+        <xsl:with-param name="content" select="java:ca.discoverygarden.gsearch_extensions.AlphaNumericSort.leftPadTokens($content)"/>
+        <xsl:with-param name="suffix" select="_ss"/>
+      </xsl:call-template>
+    </xsl:if>
   </xsl:template>
 
   <!-- Does the actual Solr field writing -->
