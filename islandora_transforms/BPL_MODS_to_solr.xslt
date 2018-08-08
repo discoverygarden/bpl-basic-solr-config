@@ -192,7 +192,7 @@
             <xsl:variable name="token" select="normalize-space(.)"/>
             <xsl:choose>
               <xsl:when test="number($token) = number($token)">
-                <xsl:value-of select="format-number($token, 000000)"/>
+                <xsl:value-of select="format-number(number($token), '000000')"/>
               </xsl:when>
               <xsl:otherwise>
                 <xsl:value-of select="$token"/>
