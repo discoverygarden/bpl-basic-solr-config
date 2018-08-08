@@ -4,6 +4,7 @@
   xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
   xmlns:foxml="info:fedora/fedora-system:def/foxml#"
   xmlns:mods="http://www.loc.gov/mods/v3"
+  xmlns:exslt-string="http://exslt.org/strings"
   exclude-result-prefixes="mods">
 
   <!-- Gather all abstracts, typed or not -->
@@ -79,7 +80,7 @@
   </xsl:template>
 
   <!-- Both types of call numbers, for advanced search -->
-  <xsl:template mode="slurp_for_bpl" match="mods:mods/mods:identifier[@type='local-call-number'] | mods:identifier[@type='non-marc-call-number']">
+  <xsl:template mode="slurp_for_bpl" match="mods:mods/mods:identifier[@type='local-call-number']">
     <xsl:call-template name="write_bpl_field">
       <xsl:with-param name="field_name" select="'all_call_numbers'"/>
       <xsl:with-param name="content" select="normalize-space()"/>
@@ -174,6 +175,43 @@
       <xsl:with-param name="content" select="$content"/>
     </xsl:call-template>
     <xsl:apply-templates mode="slurp_for_bpl"/>
+  </xsl:template>
+
+  <!-- Fields created from the non-marc-call-number. -->
+  <xsl:template mode="slurp_for_bpl" match="mods:mods/mods:identifier[@type = 'non-marc-call-number']">
+    <xsl:variable name="content" select="normalize-space(text())"/>
+    <xsl:if test="not($content = '')">
+      <!-- XXX: In an ideal world, we'd be on Solr 6+ and able to use query slop
+         to force token ordering at query time with fancy padding. Instead,
+         manually tokenize, set sort padding, and re-assemble/store so we can
+         use an untokenized string to sort at query time. -->
+      <xsl:call-template name="write_bpl_field">
+        <xsl:with-param name="field_name" select="'identifier_non_marc_call_number'"/>
+        <xsl:with-param name="content">
+          <xsl:for-each select="exslt-string:tokenize($content, '-_ ')">
+            <xsl:variable name="token" select="normalize-space(.)"/>
+            <xsl:choose>
+              <xsl:when test="number($token) = number($token)">
+                <xsl:value-of select="format-number(number($token), '000000')"/>
+              </xsl:when>
+              <xsl:otherwise>
+                <xsl:value-of select="$token"/>
+              </xsl:otherwise>
+            </xsl:choose>
+          </xsl:for-each>
+        </xsl:with-param>
+        <xsl:with-param name="suffix" select="'_ss'"/>
+      </xsl:call-template>
+    </xsl:if>
+    <xsl:call-template name="write_bpl_field">
+      <xsl:with-param name="field_name" select="'all_call_numbers'"/>
+      <xsl:with-param name="content" select="normalize-space()"/>
+    </xsl:call-template>
+    <xsl:call-template name="write_bpl_field">
+      <xsl:with-param name="field_name" select="'all_call_numbers'"/>
+      <xsl:with-param name="content" select="normalize-space()"/>
+      <xsl:with-param name="suffix" select="'_est'"/>
+    </xsl:call-template>
   </xsl:template>
 
   <!-- Does the actual Solr field writing -->
