@@ -188,7 +188,7 @@
       <xsl:call-template name="write_bpl_field">
         <xsl:with-param name="field_name" select="'identifier_non_marc_call_number'"/>
         <xsl:with-param name="content">
-          <xsl:for-each select="exslt-string:tokenize($content, '-_ ')">
+          <xsl:for-each select="exslt-string:tokenize($content, '-_ ()')">
             <xsl:variable name="token" select="normalize-space(.)"/>
             <xsl:choose>
               <xsl:when test="number($token) = number($token)">
