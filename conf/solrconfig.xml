@@ -1334,6 +1334,28 @@
     </arr>
   </requestHandler>
 
+  <searchComponent class="solr.SuggestComponent" name="suggest">
+    <lst name="suggester">
+      <str name="name">analyzingInfixSuggester</str>
+      <str name="lookupImpl">FuzzyLookupFactory</str>
+      <str name="dictionaryImpl">DocumentDictionaryFactory</str>
+      <str name="field">fgs_label_t</str>
+      <str name="weightField">suggest_weight</str>
+      <str name="suggestAnalyzerFieldType">text</str>
+      <str name="buildOnCommit">true</str>
+    </lst>
+  </searchComponent>
+
+  <requestHandler class="solr.SearchHandler" name="/suggest">
+    <lst name="defaults">
+      <str name="suggest">true</str>
+      <str name="suggest.count">1000</str>
+    </lst>
+    <arr name="components">
+      <str>suggest</str>
+    </arr>
+  </requestHandler>
+ 
   <!-- Term Vector Component
 
        http://wiki.apache.org/solr/TermVectorComponent
