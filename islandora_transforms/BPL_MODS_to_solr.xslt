@@ -179,7 +179,9 @@
 
   <!-- Fields created from the non-marc-call-number. -->
   <xsl:template mode="slurp_for_bpl" match="mods:mods/mods:identifier[@type = 'non-marc-call-number']">
-    <xsl:variable name="content" select="normalize-space(text())"/>
+    <xsl:variable name="lowercase" select="'abcdefghijklmnopqrstuvwxyz'"/>
+    <xsl:variable name="uppercase" select="'ABCDEFGHIJKLMNOPQRSTUVWXYZ'"/>
+    <xsl:variable name="content" select="translate(normalize-space(text()), $uppercase, $lowercase)"/>
     <xsl:if test="not($content = '')">
       <!-- XXX: In an ideal world, we'd be on Solr 6+ and able to use query slop
          to force token ordering at query time with fancy padding. Instead,
@@ -188,11 +190,17 @@
       <xsl:call-template name="write_bpl_field">
         <xsl:with-param name="field_name" select="'identifier_non_marc_call_number'"/>
         <xsl:with-param name="content">
-          <xsl:for-each select="exslt-string:tokenize($content, '-_ ()')">
+          <xsl:for-each select="exslt-string:tokenize($content, '-_ ()#,')">
             <xsl:variable name="token" select="normalize-space(.)"/>
             <xsl:choose>
               <xsl:when test="number($token) = number($token)">
                 <xsl:value-of select="format-number(number($token), '000000')"/>
+              </xsl:when>
+              <xsl:when test="number(substring($token, 1, string-length($token) - 2)) = number(substring($token, 1, string-length($token) - 2))">
+                <xsl:variable name="number" select="substring($token, 1, string-length($token) - 2)"/>
+                <xsl:variable name="suffix" select="substring($token, string-length($token) - 1)"/>
+                <xsl:value-of select="format-number(number($number), '000000')"/>
+                <xsl:value-of select="$suffix"/>
               </xsl:when>
               <xsl:otherwise>
                 <xsl:value-of select="$token"/>
