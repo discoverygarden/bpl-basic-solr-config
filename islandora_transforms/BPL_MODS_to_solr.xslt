@@ -183,7 +183,11 @@
     <xsl:variable name="uppercase" select="'ABCDEFGHIJKLMNOPQRSTUVWXYZ'"/>
     <xsl:variable name="content" select="translate(normalize-space(text()), $uppercase, $lowercase)"/>
     <xsl:if test="not($content = '')">
-      <!-- XXX: In an ideal world, we'd be on Solr 6+ and able to use query slop
+      <!-- Create the custom field for sorting on call numbers.
+         XXX: This is basically sorting alphanumerically, adding padding for numbers,
+         and ignoring special characters like dashes, spaces, and brackets. This may
+         break in some cases, as the call number data is messy.
+         XXX: In an ideal world, we'd be on Solr 6+ and able to use query slop
          to force token ordering at query time with fancy padding. Instead,
          manually tokenize, set sort padding, and re-assemble/store so we can
          use an untokenized string to sort at query time. -->
