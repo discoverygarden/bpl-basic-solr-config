@@ -200,9 +200,18 @@
               <xsl:when test="number($token) = number($token)">
                 <xsl:value-of select="format-number(number($token), '000000')"/>
               </xsl:when>
-              <xsl:when test="number(substring($token, 1, string-length($token) - 2)) = number(substring($token, 1, string-length($token) - 2))">
-                <xsl:variable name="number" select="substring($token, 1, string-length($token) - 2)"/>
-                <xsl:variable name="suffix" select="substring($token, string-length($token) - 1)"/>
+              <!-- Check if last character is a letter and first character is a number. -->
+              <xsl:when test="contains($lowercase, substring($token, string-length($token), 1)) and
+                              number(substring($token, 1, 1)) = number(substring($token, 1, 1))">
+                <!-- Split the string into two parts (number and suffix) and zero-pad the number part.
+                     XXX: This will only work for strings that are of the form ([0-9]+)([a-zA-Z]+). -->
+                <xsl:variable name="num_digits">
+                  <xsl:call-template name="leading_digits">
+                    <xsl:with-param name="text" select="$token"/>
+                  </xsl:call-template>
+                </xsl:variable>
+                <xsl:variable name="number" select="substring($token, 1, $num_digits)"/>
+                <xsl:variable name="suffix" select="substring($token, $num_digits + 1)"/>
                 <xsl:value-of select="format-number(number($number), '000000')"/>
                 <xsl:value-of select="$suffix"/>
               </xsl:when>
@@ -224,6 +233,23 @@
       <xsl:with-param name="content" select="normalize-space()"/>
       <xsl:with-param name="suffix" select="'_est'"/>
     </xsl:call-template>
+  </xsl:template>
+
+  <!-- Helper template to get number of leading digits in a string. -->
+  <xsl:template name="leading_digits">
+    <xsl:param name="text"/>
+    <xsl:param name="count" select="0"/>
+    <xsl:choose>
+      <xsl:when test="number(substring($text, 1, 1)) = number(substring($text, 1, 1))">
+        <xsl:call-template name="leading_digits">
+          <xsl:with-param name="text" select="substring($text, 2)"/>
+          <xsl:with-param name="count" select="$count + 1"/>
+        </xsl:call-template>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:value-of select="$count"/>
+      </xsl:otherwise>
+    </xsl:choose>
   </xsl:template>
 
   <!-- Does the actual Solr field writing -->
