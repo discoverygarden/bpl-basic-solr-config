@@ -1339,7 +1339,7 @@
       <str name="name">analyzingInfixSuggester</str>
       <str name="lookupImpl">FuzzyLookupFactory</str>
       <str name="dictionaryImpl">DocumentDictionaryFactory</str>
-      <str name="field">fgs_label_t</str>
+      <str name="field">suggestions</str>
       <str name="weightField">suggest_weight</str>
       <str name="suggestAnalyzerFieldType">text</str>
       <str name="buildOnCommit">true</str>
@@ -1355,7 +1355,7 @@
       <str>suggest</str>
     </arr>
   </requestHandler>
- 
+
   <!-- Term Vector Component
 
        http://wiki.apache.org/solr/TermVectorComponent

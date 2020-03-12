@@ -289,6 +289,16 @@
       </analyzer>
     </fieldType>
 
+    <!-- Custom field type with minimal token and processing. -->
+    <fieldType class="solr.TextField" name="text_suggest" positionIncrementGap="100">
+      <analyzer>
+        <tokenizer class="solr.StandardTokenizerFactory"/>
+        <filter class="solr.StandardFilterFactory"/>
+        <filter class="solr.LowerCaseFilterFactory"/>
+        <filter class="solr.RemoveDuplicatesTokenFilterFactory"/>
+      </analyzer>
+    </fieldType>
+
  </types>
 
 
@@ -360,6 +370,9 @@
    <dynamicField name="*" type="text_fgs"  indexed="true"  stored="true" multiValued="true"/>
    <field name="_version_" type="long" indexed="true" stored="true"/>
 
+  <!-- Custom solr suggestions field. -->
+   <field name="suggestions" type="text_suggest" indexed="true" stored="true" multiValued="true"/>
+
  </fields>
 
  <!-- Field to use to determine and enforce document uniqueness.
@@ -389,6 +402,33 @@
 <copyField source="*_dt" dest="*_mdt"/>
 <copyField source="*_mdt" dest="*_mt"/>
 <copyField source="PID" dest="PID_kw"/>
+
+<!-- Select fields added to on field for Solr suggest. -->
+<copyField source="fgs_label_s" dest="suggestions"/>
+<copyField source="mods_name_corporate_namePart_s" dest="suggestions"/>
+<copyField source="mods_name_donor_namePart_s" dest="suggestions"/>
+<copyField source="mods_name_personal_namePart_s" dest="suggestions"/>
+<copyField source="mods_note_biographical/historical_s" dest="suggestions"/>
+<copyField source="mods_originInfo_dateIssued_s" dest="suggestions"/>
+<copyField source="mods_subject_topic_s" dest="suggestions"/>
+<copyField source="mods_tableOfContents_s" dest="suggestions"/>
+<copyField source="bpl_mods_abstract_all_types_s" dest="suggestions"/>
+<copyField source="bpl_mods_identifier_non-marc-filing-suffix_concatenated_non-marc-call-number_s" dest="suggestions"/>
+<copyField source="bpl_mods_physicalDescription_extent_concatenated_unit_s" dest="suggestions"/>
+<copyField source="bpl_mods_note_no_type_s" dest="suggestions"/>
+<copyField source="bpl_mods_titleInfo_title_concatenated_nonSort_concatenated_subTitle_s" dest="suggestions"/>
+<copyField source="mods_name_corporate_namePart_ms" dest="suggestions"/>
+<copyField source="mods_name_donor_namePart_ms" dest="suggestions"/>
+<copyField source="mods_name_personal_namePart_ms" dest="suggestions"/>
+<copyField source="mods_note_biographical/historical_ms" dest="suggestions"/>
+<copyField source="mods_originInfo_dateIssued_ms" dest="suggestions"/>
+<copyField source="mods_subject_topic_ms" dest="suggestions"/>
+<copyField source="mods_tableOfContents_ms" dest="suggestions"/>
+<copyField source="bpl_mods_abstract_all_types_ms" dest="suggestions"/>
+<copyField source="bpl_mods_identifier_non-marc-filing-suffix_concatenated_non-marc-call-number_ms" dest="suggestions"/>
+<copyField source="bpl_mods_physicalDescription_extent_concatenated_unit_ms" dest="suggestions"/>
+<copyField source="bpl_mods_note_no_type_ms" dest="suggestions"/>
+<copyField source="bpl_mods_titleInfo_title_concatenated_nonSort_concatenated_subTitle_ms" dest="suggestions"/>
 
 <!-- The following line is a bit of a performance hog, I would look to remove it if the indexing takes a long time. -->
 <copyField source="*" dest="catch_all_fields_mt"/>
