@@ -1355,7 +1355,6 @@
       <str>suggest</str>
     </arr>
   </requestHandler>
-
   <!-- Term Vector Component
 
        http://wiki.apache.org/solr/TermVectorComponent
