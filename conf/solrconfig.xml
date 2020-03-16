@@ -1337,11 +1337,11 @@
   <searchComponent class="solr.SuggestComponent" name="suggest">
     <lst name="suggester">
       <str name="name">analyzingInfixSuggester</str>
-      <str name="lookupImpl">FuzzyLookupFactory</str>
+      <str name="lookupImpl">AnalyzingInfixLookupFactory</str>
       <str name="dictionaryImpl">DocumentDictionaryFactory</str>
       <str name="field">suggestions</str>
-      <str name="weightField">suggest_weight</str>
-      <str name="suggestAnalyzerFieldType">text</str>
+      <str name="weightField">weight</str>
+      <str name="suggestAnalyzerFieldType">text_suggest</str>
       <str name="buildOnCommit">true</str>
     </lst>
   </searchComponent>
@@ -1355,6 +1355,7 @@
       <str>suggest</str>
     </arr>
   </requestHandler>
+
   <!-- Term Vector Component
 
        http://wiki.apache.org/solr/TermVectorComponent

@@ -289,11 +289,9 @@
       </analyzer>
     </fieldType>
 
-    <!-- Custom field type with minimal token and processing. -->
     <fieldType class="solr.TextField" name="text_suggest" positionIncrementGap="100">
       <analyzer>
-        <tokenizer class="solr.StandardTokenizerFactory"/>
-        <filter class="solr.StandardFilterFactory"/>
+        <tokenizer class="solr.WhitespaceTokenizerFactory"/>
         <filter class="solr.LowerCaseFilterFactory"/>
         <filter class="solr.RemoveDuplicatesTokenFilterFactory"/>
       </analyzer>
