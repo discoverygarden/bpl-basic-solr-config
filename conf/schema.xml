@@ -297,6 +297,14 @@
       </analyzer>
     </fieldType>
 
+    <!-- Case insenstive fieldType for Compressed Results -->
+    <fieldType name="caseInsensitiveString" class="solr.TextField" sortMissingLast="true" omitNorms="true">
+        <analyzer>
+            <tokenizer class="solr.KeywordTokenizerFactory"/>
+            <filter class="solr.LowerCaseFilterFactory" />
+        </analyzer>
+    </fieldType>
+
  </types>
 
 
@@ -359,6 +367,9 @@
    <dynamicField name="*_et" type="edgedText" indexed="true" stored="true" multiValued="true"/>
    <dynamicField name="*_est" type="edgedSingleText" indexed="true" stored="true" multiValued="true"/>
    <dynamicField name="*_mlt" type="mappedLowerText" indexed="true" stored="true" multiValued='false'/>
+
+   <!-- Creating a dynamicField for Compressed Search Facets -->
+   <dynamicField name="*_sci" type="caseInsensitiveString" indexed="true" stored="true" multiValued='true'/>
 
    <!-- uncomment the following to ignore any fields that don't already match an existing
         field name or dynamic field, rather than reporting them as an error.
@@ -430,6 +441,12 @@
 
 <!-- The following line is a bit of a performance hog, I would look to remove it if the indexing takes a long time. -->
 <copyField source="*" dest="catch_all_fields_mt"/>
+
+<!-- BPL Compressed Search Facets -->
+<copyField source="mods_titleInfo_title_s" dest="mods_titleInfo_title_sci"/>
+<copyField source="mods_subject_topic_s" dest="mods_subject_topic_sci"/>
+<copyField source="bpl_mods_all_call_numbers_ms" dest="bpl_mods_all_call_numbers_sci"/>
+<copyField source="bpl_mods_author_donor_ms" dest="bpl_mods_author_donor_sci"/>
 
  <!-- Similarity is the scoring routine for each document vs. a query.
       A custom similarity may be specified here, but the default is fine
