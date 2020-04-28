@@ -443,8 +443,7 @@
 <copyField source="*" dest="catch_all_fields_mt"/>
 
 <!-- BPL Compressed Search Facets -->
-<copyField source="mods_titleInfo_title_s" dest="mods_titleInfo_title_sci"/>
-<copyField source="mods_titleInfo_title_ms" dest="mods_titleInfo_title_sci"/>
+<copyField source="bpl_mods_titleInfo_title_ms" dest="bpl_mods_titleInfo_title_sci"/>
 <copyField source="mods_subject_topic_s" dest="mods_subject_topic_sci"/>
 <copyField source="mods_subject_topic_ms" dest="mods_subject_topic_sci"/>
 <copyField source="bpl_mods_all_call_numbers_ms" dest="bpl_mods_all_call_numbers_sci"/>

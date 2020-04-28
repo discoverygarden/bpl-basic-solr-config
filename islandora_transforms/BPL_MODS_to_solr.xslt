@@ -110,13 +110,18 @@
 
   <!-- Concatenate title/nonSort with title -->
   <xsl:template mode="slurp_for_bpl" match="mods:mods/mods:titleInfo">
+    <xsl:variable name="title" select="normalize-space(mods:title)"/>
+    <xsl:call-template name="write_bpl_field">
+      <xsl:with-param name="field_name" select="'titleInfo_title'"/>
+      <xsl:with-param name="content" select="$title"/>
+    </xsl:call-template>
     <xsl:variable name="content">
       <xsl:choose>
-        <xsl:when test="mods:title and mods:nonSort">
-          <xsl:value-of select="concat(normalize-space(mods:nonSort/text()), ' ', normalize-space(mods:title/text()))"/>
+        <xsl:when test="$title and mods:nonSort">
+          <xsl:value-of select="concat(normalize-space(mods:nonSort/text()), ' ', normalize-space($title))"/>
         </xsl:when>
-        <xsl:when test="mods:title and not(mods:nonSort)">
-          <xsl:value-of select="normalize-space(mods:title/text())"/>
+        <xsl:when test="$title and not(mods:nonSort)">
+          <xsl:value-of select="normalize-space($title)"/>
         </xsl:when>
       </xsl:choose>
     </xsl:variable>
