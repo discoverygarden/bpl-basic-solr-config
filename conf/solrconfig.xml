@@ -1339,7 +1339,78 @@
       <str name="name">analyzingInfixSuggester</str>
       <str name="lookupImpl">AnalyzingInfixLookupFactory</str>
       <str name="dictionaryImpl">DocumentDictionaryFactory</str>
-      <str name="field">suggestions</str>
+      <str name="field">suggester_description</str>
+      <str name="indexPath">suggester_description</str>
+      <str name="weightField">weight</str>
+      <str name="suggestAnalyzerFieldType">text_suggest</str>
+      <str name="buildOnCommit">true</str>
+    </lst>
+    <lst name="suggester">
+      <str name="name">analyzingInfixSuggester_summary</str>
+      <str name="lookupImpl">AnalyzingInfixLookupFactory</str>
+      <str name="dictionaryImpl">DocumentDictionaryFactory</str>
+      <str name="field">suggester_summary</str>
+      <str name="indexPath">suggester_summary</str>
+      <str name="weightField">weight</str>
+      <str name="suggestAnalyzerFieldType">text_suggest</str>
+      <str name="buildOnCommit">true</str>
+    </lst>
+    <lst name="suggester">
+      <str name="name">analyzingInfixSuggester_subjects</str>
+      <str name="lookupImpl">AnalyzingInfixLookupFactory</str>
+      <str name="dictionaryImpl">DocumentDictionaryFactory</str>
+      <str name="field">suggester_subjects</str>
+      <str name="indexPath">suggester_subjects</str>
+      <str name="weightField">weight</str>
+      <str name="suggestAnalyzerFieldType">text_suggest</str>
+      <str name="buildOnCommit">true</str>
+    </lst>
+    <lst name="suggester">
+      <str name="name">analyzingInfixSuggester_title</str>
+      <str name="lookupImpl">AnalyzingInfixLookupFactory</str>
+      <str name="dictionaryImpl">DocumentDictionaryFactory</str>
+      <str name="field">suggester_title</str>
+      <str name="indexPath">suggester_title</str>
+      <str name="weightField">weight</str>
+      <str name="suggestAnalyzerFieldType">text_suggest</str>
+      <str name="buildOnCommit">true</str>
+    </lst>
+    <lst name="suggester">
+      <str name="name">analyzingInfixSuggester_pname</str>
+      <str name="lookupImpl">AnalyzingInfixLookupFactory</str>
+      <str name="dictionaryImpl">DocumentDictionaryFactory</str>
+      <str name="field">suggester_personalname</str>
+      <str name="indexPath">suggester_personalname</str>
+      <str name="weightField">weight</str>
+      <str name="suggestAnalyzerFieldType">text_suggest</str>
+      <str name="buildOnCommit">true</str>
+    </lst>
+    <lst name="suggester">
+      <str name="name">analyzingInfixSuggester_history</str>
+      <str name="lookupImpl">AnalyzingInfixLookupFactory</str>
+      <str name="dictionaryImpl">DocumentDictionaryFactory</str>
+      <str name="field">suggester_history</str>
+      <str name="indexPath">suggester_history</str>
+      <str name="weightField">weight</str>
+      <str name="suggestAnalyzerFieldType">text_suggest</str>
+      <str name="buildOnCommit">true</str>
+    </lst>
+    <lst name="suggester">
+      <str name="name">analyzingInfixSuggester_author</str>
+      <str name="lookupImpl">AnalyzingInfixLookupFactory</str>
+      <str name="dictionaryImpl">DocumentDictionaryFactory</str>
+      <str name="field">suggester_author</str>
+      <str name="indexPath">suggester_author</str>
+      <str name="weightField">weight</str>
+      <str name="suggestAnalyzerFieldType">text_suggest</str>
+      <str name="buildOnCommit">true</str>
+    </lst>
+    <lst name="suggester">
+      <str name="name">analyzingInfixSuggester_contents</str>
+      <str name="lookupImpl">AnalyzingInfixLookupFactory</str>
+      <str name="dictionaryImpl">DocumentDictionaryFactory</str>
+      <str name="field">suggester_contents</str>
+      <str name="indexPath">suggester_contents</str>
       <str name="weightField">weight</str>
       <str name="suggestAnalyzerFieldType">text_suggest</str>
       <str name="buildOnCommit">true</str>
