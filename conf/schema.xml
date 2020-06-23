@@ -380,8 +380,14 @@
    <field name="_version_" type="long" indexed="true" stored="true"/>
 
   <!-- Custom solr suggestions field. -->
-   <field name="suggestions" type="text_suggest" indexed="true" stored="true" multiValued="true"/>
-
+   <field name="suggester_description" type="text_suggest" indexed="true" stored="true" multiValued="true"/>
+   <field name="suggester_summary" type="text_suggest" indexed="true" stored="true" multiValued="true"/>
+   <field name="suggester_subjects" type="text_suggest" indexed="true" stored="true" multiValued="true"/>
+   <field name="suggester_title" type="text_suggest" indexed="true" stored="true" multiValued="true"/>
+   <field name="suggester_personalname" type="text_suggest" indexed="true" stored="true" multiValued="true"/>
+   <field name="suggester_history" type="text_suggest" indexed="true" stored="true" multiValued="true"/>
+   <field name="suggester_author" type="text_suggest" indexed="true" stored="true" multiValued="true"/>
+   <field name="suggester_contents" type="text_suggest" indexed="true" stored="true" multiValued="true"/>
  </fields>
 
  <!-- Field to use to determine and enforce document uniqueness.
@@ -413,31 +419,14 @@
 <copyField source="PID" dest="PID_kw"/>
 
 <!-- Select fields added to on field for Solr suggest. -->
-<copyField source="fgs_label_s" dest="suggestions"/>
-<copyField source="mods_name_corporate_namePart_s" dest="suggestions"/>
-<copyField source="mods_name_donor_namePart_s" dest="suggestions"/>
-<copyField source="mods_name_personal_namePart_s" dest="suggestions"/>
-<copyField source="mods_note_biographical/historical_s" dest="suggestions"/>
-<copyField source="mods_originInfo_dateIssued_s" dest="suggestions"/>
-<copyField source="mods_subject_topic_s" dest="suggestions"/>
-<copyField source="mods_tableOfContents_s" dest="suggestions"/>
-<copyField source="bpl_mods_abstract_all_types_s" dest="suggestions"/>
-<copyField source="bpl_mods_identifier_non-marc-filing-suffix_concatenated_non-marc-call-number_s" dest="suggestions"/>
-<copyField source="bpl_mods_physicalDescription_extent_concatenated_unit_s" dest="suggestions"/>
-<copyField source="bpl_mods_note_no_type_s" dest="suggestions"/>
-<copyField source="bpl_mods_titleInfo_title_concatenated_nonSort_concatenated_subTitle_s" dest="suggestions"/>
-<copyField source="mods_name_corporate_namePart_ms" dest="suggestions"/>
-<copyField source="mods_name_donor_namePart_ms" dest="suggestions"/>
-<copyField source="mods_name_personal_namePart_ms" dest="suggestions"/>
-<copyField source="mods_note_biographical/historical_ms" dest="suggestions"/>
-<copyField source="mods_originInfo_dateIssued_ms" dest="suggestions"/>
-<copyField source="mods_subject_topic_ms" dest="suggestions"/>
-<copyField source="mods_tableOfContents_ms" dest="suggestions"/>
-<copyField source="bpl_mods_abstract_all_types_ms" dest="suggestions"/>
-<copyField source="bpl_mods_identifier_non-marc-filing-suffix_concatenated_non-marc-call-number_ms" dest="suggestions"/>
-<copyField source="bpl_mods_physicalDescription_extent_concatenated_unit_ms" dest="suggestions"/>
-<copyField source="bpl_mods_note_no_type_ms" dest="suggestions"/>
-<copyField source="bpl_mods_titleInfo_title_concatenated_nonSort_concatenated_subTitle_ms" dest="suggestions"/>
+<copyField source="bpl_mods_abstract_all_types_ms" dest="suggester_description"/>
+<copyField source="mods_tableOfContents_s" dest="suggester_summary"/>
+<copyField source="mods_subject_topic_ms" dest="suggester_subjects"/>
+<copyField source="bpl_mods_titleInfo_title_concatenated_nonSort_concatenated_subTitle_ms" dest="suggester_title"/>
+<copyField source="mods_name_personal_namePart_s" dest="suggester_personalname"/>
+<copyField source="mods_note_biographical/historical_ms" dest="suggester_history"/>
+<copyField source="mods_name_author_namePart_s" dest="suggester_author"/>
+<copyField source="bpl_mods_physicalDescription_extent_concatenated_unit_ms" dest="suggester_contents"/>
 
 <!-- The following line is a bit of a performance hog, I would look to remove it if the indexing takes a long time. -->
 <copyField source="*" dest="catch_all_fields_mt"/>
