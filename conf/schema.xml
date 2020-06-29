@@ -421,10 +421,10 @@
 <!-- Select fields added to on field for Solr suggest. -->
 <copyField source="bpl_mods_abstract_all_types_ms" dest="suggester_description"/>
 <copyField source="mods_tableOfContents_s" dest="suggester_summary"/>
-<copyField source="mods_subject_topic_ms" dest="suggester_subjects"/>
+<copyField source="mods_subject_topic_s" dest="suggester_subjects"/>
 <copyField source="bpl_mods_titleInfo_title_concatenated_nonSort_concatenated_subTitle_ms" dest="suggester_title"/>
 <copyField source="mods_name_personal_namePart_s" dest="suggester_personalname"/>
-<copyField source="mods_note_biographical/historical_ms" dest="suggester_history"/>
+<copyField source="mods_note_biographical/historical_s" dest="suggester_history"/>
 <copyField source="mods_name_author_namePart_s" dest="suggester_author"/>
 <copyField source="bpl_mods_physicalDescription_extent_concatenated_unit_ms" dest="suggester_contents"/>
 
