@@ -16,7 +16,7 @@
   </xsl:template>
 
   <!-- Author / Donor custom field -->
-  <xsl:template mode="slurp_for_bpl" match="mods:mods/mods:name[@type='personal' or @type='corporate' or @type='author' or @type='donor']/mods:namePart">
+  <xsl:template mode="slurp_for_bpl_author_donor" match="mods:mods/mods:name[@type='personal' or @type='corporate' or @type='author' or @type='donor']/mods:namePart[not(@type='date')]">
     <xsl:call-template name="write_bpl_field">
       <xsl:with-param name="field_name" select="'author_donor'"/>
       <xsl:with-param name="content" select="normalize-space()"/>
