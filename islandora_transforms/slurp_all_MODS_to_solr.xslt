@@ -30,6 +30,7 @@
       <xsl:with-param name="datastream" select="../@ID"/>
     </xsl:apply-templates>
     <xsl:apply-templates mode="slurp_for_bpl" select="$content//mods:mods[1]"/>
+    <xsl:apply-templates mode="slurp_for_bpl_author_donor" select="$content//mods:mods[1]"/>
   </xsl:template>
 
   <!-- Handle dates. -->
