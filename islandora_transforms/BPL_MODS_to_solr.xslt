@@ -162,7 +162,7 @@
   <xsl:template name="write_bpl_title_period">
     <xsl:param name="content"/>
     <xsl:choose>
-      <xsl:when test="not(contains(substring($content, string-length(.)), '.'))">
+      <xsl:when test="not(contains(substring($content, string-length($content)), '.'))">
         <xsl:value-of select="concat($content, '.')"/>
       </xsl:when>
       <xsl:otherwise>
