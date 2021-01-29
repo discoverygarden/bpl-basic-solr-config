@@ -125,10 +125,6 @@
         </xsl:when>
       </xsl:choose>
     </xsl:variable>
-    <xsl:call-template name="write_bpl_field">
-      <xsl:with-param name="field_name" select="'titleInfo_title_concatenated_nonSort'"/>
-      <xsl:with-param name="content" select="$content"/>
-    </xsl:call-template>
     <!-- Concatenate subTitle with this concatenated field with ': ' -->
     <xsl:variable name="concatenated_title_nonSort_subTitle">
       <xsl:variable name="subtitle" select="normalize-space(mods:subTitle)"/>
@@ -138,10 +134,41 @@
         <xsl:value-of select="$subtitle"/>
       </xsl:if>
     </xsl:variable>
+
+    <!-- Checking and writing period of needed.  -->
+    <xsl:variable name="content_period">
+      <xsl:call-template name="write_bpl_title_period">
+        <xsl:with-param name="content" select="$content"/>
+      </xsl:call-template>
+    </xsl:variable>
+    <xsl:variable name="concatenated_title_nonSort_subTitle_period">
+      <xsl:call-template name="write_bpl_title_period">
+        <xsl:with-param name="content" select="$concatenated_title_nonSort_subTitle"/>
+      </xsl:call-template>
+    </xsl:variable>
+
+    <!-- Writing to Fields -->
+    <xsl:call-template name="write_bpl_field">
+      <xsl:with-param name="field_name" select="'titleInfo_title_concatenated_nonSort'"/>
+      <xsl:with-param name="content" select="$content_period"/>
+    </xsl:call-template>
     <xsl:call-template name="write_bpl_field">
       <xsl:with-param name="field_name" select="'titleInfo_title_concatenated_nonSort_concatenated_subTitle'"/>
-      <xsl:with-param name="content" select="$concatenated_title_nonSort_subTitle"/>
+      <xsl:with-param name="content" select="$concatenated_title_nonSort_subTitle_period"/>
     </xsl:call-template>
+  </xsl:template>
+
+  <!-- Adding Period to String end if necessary -->
+  <xsl:template name="write_bpl_title_period">
+    <xsl:param name="content"/>
+    <xsl:choose>
+      <xsl:when test="not(contains(substring($content, string-length($content)), '.'))">
+        <xsl:value-of select="concat($content, '.')"/>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:value-of select="$content"/>
+      </xsl:otherwise>
+    </xsl:choose>
   </xsl:template>
 
   <!-- Concatenate physicalDescription/extent with the extent's @unit -->
